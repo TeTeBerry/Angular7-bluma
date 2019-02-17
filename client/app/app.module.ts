@@ -2,7 +2,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule }    from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-
 import { AppComponent }  from './app.component';
 import { routing }        from './app.routing';
 
@@ -13,6 +12,8 @@ import { AlertService, AuthenticationService, UserService } from './_services/in
 import { HomeComponent } from './home/index';
 import { LoginComponent } from './login/index';
 import { RegisterComponent } from './register/index';
+import { HeaderComponent } from './header/index';
+import { MemberComponent } from './member/index';
 
 @NgModule({
     imports: [
@@ -26,7 +27,9 @@ import { RegisterComponent } from './register/index';
         AlertComponent,
         HomeComponent,
         LoginComponent,
-        RegisterComponent
+        RegisterComponent,
+        HeaderComponent,
+        MemberComponent
     ],
     providers: [
         AuthGuard,

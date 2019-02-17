@@ -21,10 +21,11 @@ app.use(expressJwt({
         }
         return null;
     }
-}).unless({ path: ['/users/authenticate', '/users/register'] }));
+}).unless({ path: ['/users/authenticate', '/users/register','/members/authenticate','/members/register'] }));
 
 // routes
 app.use('/users', require('./controllers/users.controller'));
+app.use('/members',require('./controllers/members.controller'));
 
 // error handler
 app.use(function (err, req, res, next) {
