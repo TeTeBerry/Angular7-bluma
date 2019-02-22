@@ -12,6 +12,7 @@
         map: {
             // our app is within the app folder
             app: 'app',
+            'lodash': 'npm:lodash',
 
             // angular bundles
             '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
@@ -35,6 +36,10 @@
             },
             rxjs: {
                 defaultExtension: 'js'
+            },
+            lodash: {
+                main: 'index.js',
+                defaultExtension: 'js',
             }
         }
     });

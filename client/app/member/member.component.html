@@ -1,1 +1,272 @@
-MEMBER WORKS!
+<div class="field is-grouped">
+    <a class="button is-primary" (click)="createMemberModal()">Create Member</a>
+</div>
+
+
+<table class="table">
+    <thead>
+      <tr>
+        <th><abbr title="MemberName">Member Name</abbr></th>
+        <th><abbr title="Room">Room</abbr></th>
+        <th><abbr title="Email">Email</abbr></th>
+        <th><abbr title="Telephone">TelePhone</abbr></th>
+        <th><abbr title="Credit">Credit</abbr></th>
+        <th><abbr title="Operation">Operation</abbr></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let member of members">
+        <th>{{member.membername}}</th>
+        <th>{{member.room}}</th>
+        <th>{{member.email}}</th>
+        <th>{{member.tel}}</th>
+        <th>{{member.credit}}</th>
+        <th><a class="button is-success" (click)="topupModal()">Topup</a><a class="button is-danger" (click)="deleteMember(member._id)">Delete</a><a class="button is-warning" (click)="updateMember(member)">Update</a></th>
+      </tr>
+    </tbody>
+  </table>
+
+<div class="modal" [ngClass]="{ 'is-active' : isModalActive }">
+    <div class="modal-background" (click)="toggleModal()"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Member Register Form</p>
+            <button class="delete" aria-label="close" (click)="toggleModal()"></button>
+        </header>
+        <form [formGroup]="registerMemberForm" (ngSubmit)="onSubmit()">
+        <section class="modal-card-body">
+
+                <div class="form-group">
+                    <div class="field">
+                        <label for="membername">Membername</label>
+                        <div class="control has-icons-left has-icons-right">
+                            <input class="input is-success" type="text" formControlName="membername" [ngClass]="{ 'is-invalid': submitted && f.membername.errors } " required/>
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <span class="icon is-small is-right">
+                                <i class="fas fa-check"></i>
+                            </span>
+                        </div>
+                        <div *ngIf="submitted && f.membername.errors">
+                        <div *ngIf="f.membername.errors.required" class="help-block">Member Name is required</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="field">
+                        <label for="room">room</label>
+                        <div class="control has-icons-left has-icons-right">
+                            <input class="input is-success" type="text" formControlName="room"
+                                [ngClass]="{'is-invalid' : (submitted && f.room.errors) }" />
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <span class="icon is-small is-right">
+                                <i class="fas fa-check"></i>
+                            </span>
+                        </div>
+                        <div *ngIf="submitted && f.room.errors">
+                        <div *ngIf="f.room.errors.required" class="help-block">Room is required</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="field">
+                        <label for="email">Email</label>
+                        <div class="control has-icons-left has-icons-right">
+                            <input class="input is-success" type="text" formControlName="email"
+                                [ngClass]="{'is-invalid' : (submitted && f.email.errors) }" />
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <span class="icon is-small is-right">
+                                <i class="fas fa-check"></i>
+                            </span>
+                        </div>
+                        <div *ngIf="submitted && f.email.errors">
+                        <div *ngIf="f.email.errors.required" class="help-block">Email is required</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="field">
+                        <label for="tel">Telephone</label>
+                        <div class="control has-icons-left has-icons-right">
+                            <input class="input is-success" type="text" formControlName="tel"
+                                [ngClass]="{'is-invalid' : (submitted && f.tel.errors) }" />
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <span class="icon is-small is-right">
+                                <i class="fas fa-check"></i>
+                            </span>
+                        </div>
+                        <div *ngIf="submitted && f.tel.errors">
+                        <div *ngIf="f.tel.errors.required" class="help-block">Telephone is required</div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <div class="control has-icons-left has-icons-right">
+                            <input class="input is-success" type="password" formControlName="password"
+                                [ngClass]="{'is-invalid' : (submitted && f.password.errors) }" />
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <span class="icon is-small is-right">
+                                <i class="fas fa-check"></i>
+                            </span>
+                        </div>
+                        <div *ngIf="submitted && f.password.errors">
+                        <div *ngIf="f.password.errors.required" class="help-block">Password is required</div>
+                        <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
+                        </div>
+                    </div>
+                </div>
+
+        </section>
+
+        <footer class="modal-card-foot">
+            <div class="form-group">
+            <button class="button is-success">Save</button>
+            <button class="button" (click)="toggleModal()">Cancel</button>
+            </div>
+            <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+        </footer>
+        </form>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="{ 'is-active' : topupModalActive }">
+    <div class="modal-background" (click)="toggleTopupModal()"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Topup Credit</p>
+        <button class="delete" aria-label="close" (click)="toggleTopupModal()"></button>
+      </header>
+      <section class="modal-card-body">
+        <form [formGroup]="registerMemberForm" (ngSubmit)="topup()">
+            <div class="form-group">
+                    <div class="field">
+                            <div class="control">
+                              <input class="input is-primary" type="text" formControlName="credit" placeholder="input credit">
+                            </div>
+                          </div>
+            </div>
+        </form>
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button is-success">Save changes</button>
+        <button class="button" (click)="toggleTopupModal()">Cancel</button>
+      </footer>
+    </div>
+</div>
+
+<div class="modal" [ngClass]="{ 'is-active' : updateModalActive }">
+        <div class="modal-background" (click)="toggleUpdateModal()"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Member Update Form</p>
+                <button class="delete" aria-label="close" (click)="toggleUpdateModal()"></button>
+            </header>
+            <form [formGroup]="registerMemberForm" (ngSubmit)="onSubmitUpdate()">
+            <section class="modal-card-body">
+    
+                    <div class="form-group">
+                        <div class="field">
+                            <label for="membername">Membername</label>
+                            <div class="control has-icons-left has-icons-right">
+                                <input class="input is-success" type="text" formControlName="membername" [ngClass]="{ 'is-invalid': submitted && f.membername.errors } " required/>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <span class="icon is-small is-right">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            </div>
+                            <div *ngIf="submitted && f.membername.errors">
+                            <div *ngIf="f.membername.errors.required" class="help-block">Member Name is required</div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <div class="field">
+                            <label for="room">room</label>
+                            <div class="control has-icons-left has-icons-right">
+                                <input class="input is-success" type="text" formControlName="room"
+                                    [ngClass]="{'is-invalid' : (submitted && f.room.errors) }" />
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <span class="icon is-small is-right">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            </div>
+                            <div *ngIf="submitted && f.room.errors">
+                            <div *ngIf="f.room.errors.required" class="help-block">Room is required</div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <div class="field">
+                            <label for="email">Email</label>
+                            <div class="control has-icons-left has-icons-right">
+                                <input class="input is-success" type="text" formControlName="email"
+                                    [ngClass]="{'is-invalid' : (submitted && f.email.errors) }" />
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <span class="icon is-small is-right">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            </div>
+                            <div *ngIf="submitted && f.email.errors">
+                            <div *ngIf="f.email.errors.required" class="help-block">Email is required</div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <div class="field">
+                            <label for="tel">Telephone</label>
+                            <div class="control has-icons-left has-icons-right">
+                                <input class="input is-success" type="text" formControlName="tel"
+                                    [ngClass]="{'is-invalid' : (submitted && f.tel.errors) }" />
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <span class="icon is-small is-right">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            </div>
+                            <div *ngIf="submitted && f.tel.errors">
+                            <div *ngIf="f.tel.errors.required" class="help-block">Telephone is required</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+    
+            </section>
+    
+            <footer class="modal-card-foot">
+                <div class="form-group">
+                <button class="button is-success">Save</button>
+                <button class="button" (click)="toggleUpdateModal()">Cancel</button>
+                </div>
+                <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+            </footer>
+            </form>
+        </div>
+    </div>
+             

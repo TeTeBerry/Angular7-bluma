@@ -4,8 +4,8 @@ var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 var Q = require('q');
 var mongo = require('mongoskin');
-var db = mongo.db(config.connectionString,{ native_parser: true});
-db.bind('member');
+var db = mongo.db(config.connectionString, { native_parser: true });
+db.bind('members');
 
 var service = {};
 
@@ -50,7 +50,7 @@ function getAll() {
         if(err) deferred.reject(err.name + ': ' + err.message);
 
         // return members (withour hashed passwords)
-        members = _map(members, function (member) {
+        members = _.map(members, function (member) {
             return _.omit(member, 'hash');
         });
 
@@ -84,58 +84,61 @@ function create(memberParam) {
     //validation
     db.members.findOne(
         { membername: memberParam.membername },
-        function (err,member) {
+        function (err, member) {
             if (err) deferred.reject(err.name + ': ' + err.message);
 
             if (member) {
-                //membername already exists
-                deferred.reject('Member"' + memberParam.membername + '"is already taken');
-            }else{
+                // username already exists
+                deferred.reject('Membername "' + memberParam.membername + '" is already taken');
+            } else {
                 createMember();
             }
         });
-
         function createMember() {
-            //set member object to memberParam without the cleartext password
-            var user = bcrypt.hashSync(memberParam.password, 10);
+            // set user object to userParam without the cleartext password
+        var member = _.omit(memberParam, 'password');
 
-            db.members.insert(
-                member,
-                function (err,doc) {
-                    if(err) deferred.reject(err.name + ': '+ err.message);
+        // add hashed password to user object
+        member.hash = bcrypt.hashSync(memberParam.password, 10);
+        console.log(memberParam);
 
-                    deferred.resolve();
-                });
-        }
-        return deferred.promise
+        db.members.insert(
+            member,
+            function (err, doc) {
+                if (err) deferred.reject(err.name + ': ' + err.message);
+
+                deferred.resolve();
+            });
+    }
+
+    return deferred.promise;
 }
 
-function update() {
+function update(_id, memberParam) {
     var deferred = Q.defer();
 
     //validation
-    db.member.findById(_id, function (err,member) {
+    db.members.findById(_id, function (err, member) {
         if (err) deferred.reject(err.name + ': ' + err.message);
 
-        if(member.membername !== memberParam.membername) {
-            //membername has check if the new member is already taken
+        if (member.membername !== memberParam.membername) {
+            // username has changed so check if the new username is already taken
             db.members.findOne(
-                {membername: memberParam.membername },
-                function (err,member) {
-                    if(err) deferred.reject(err.name + ': ' +err.message);
+                { membername: memberParam.membername },
+                function (err, member) {
+                    if (err) deferred.reject(err.name + ': ' + err.message);
 
-                    if(member) {
-                        //member already exsits
-                        deferred.reject('Membername"' + req.body.membername + '"is already taken')
-                    }else{
+                    if (member) {
+                        // username already exists
+                        deferred.reject('Membername "' + req.body.membername + '" is already taken')
+                    } else {
                         updateMember();
                     }
                 });
-        }else{
+        } else {
             updateMember();
         }
     });
-
     function updateMember() {
         //fields to update
         var set = {
@@ -167,7 +170,7 @@ function _delete(_id) {
     var deferred = Q.defer();
 
     db.members.remove(
-        { _id: momngo.helper.toObjectID(_id) },
+        { _id: mongo.helper.toObjectID(_id) },
         function (err) {
             if (err) deferred.reject(err.name + ': ' +err.message);
 
