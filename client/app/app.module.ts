@@ -13,6 +13,8 @@ import { LoginComponent } from './login/index';
 import { RegisterComponent } from './register/index';
 import { HeaderComponent } from './header/index';
 import { MemberComponent } from './member/index';
+import { AngularFireModule } from '@angular/fire';
+import { environment } from './environment';
 
 
 
@@ -22,7 +24,8 @@ import { MemberComponent } from './member/index';
         FormsModule,
         HttpClientModule,
         routing,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        AngularFireModule.initializeApp(environment.firebaseConfig),
     ],
     declarations: [
         AppComponent,

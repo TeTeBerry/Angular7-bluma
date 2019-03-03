@@ -12,7 +12,7 @@
         map: {
             // our app is within the app folder
             app: 'app',
-            'lodash': 'npm:lodash',
+            
 
             // angular bundles
             '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
@@ -26,7 +26,10 @@
 
             // other libraries
             'rxjs': 'npm:rxjs',
-            'tslib': 'npm:tslib/tslib.js'
+            'tslib': 'npm:tslib/tslib.js',
+            'lodash': 'npm:lodash',
+            'angularfire2': 'npm:angularfire2.js',
+            'firebase': 'npm:firebase',
         },
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
@@ -40,7 +43,15 @@
             lodash: {
                 main: 'index.js',
                 defaultExtension: 'js',
-            }
+            },
+            firebase: { 
+                main: '/firbase.js',
+                defaultExtension: 'js', 
+              },
+              angularfire2: {
+                  main: 'angularfire2',
+                defaultExtension: 'js' 
+              }
         }
     });
 })(this);
