@@ -18,13 +18,26 @@ service.delete = _delete;
 
 module.exports = service;
 
-function authenticate(membername, password) {
+function authenticate(membername, password, token) {
     var deferred = Q.defer();
 
     db.members.findOne({ membername: membername },function (err,member) {
         if(err) deferred.reject(err.name + ': '+err.message);
+        if (!member) deferred.resolve();
 
-        if(member && bcrypt.compareSync(password,member.hash)){
+        var passHash = false;
+        if (password != undefined || password != null) {
+            passHash = bcrypt.compareSync(password, member.hash);
+        }
+        console.log("compare hash: " + passHash);
+
+        var passToken = false;
+        if (token != undefined || token != null) {
+            passToken = token == member.token;
+        }
+        console.log("compare token: " + passToken);
+        
+        if(passToken || passHash){
             //authentication successful
             deferred.resolve({
                 _id: member._id,
@@ -33,7 +46,9 @@ function authenticate(membername, password) {
                 room: member.room,
                 tel: member.tel,
                 credit: member.credit,
-                token: jwt.sign({ sub: member._id }, config.secret) 
+                createTime: member.createTime,
+                waterFlow: member.waterFlow
+                // token: jwt.sign({ sub: member._id }, config.secret) 
             });
         }else{
             //authentication failed
@@ -95,20 +110,32 @@ function create(memberParam) {
             }
         });
         function createMember() {
-            // set user object to userParam without the cleartext password
-        var member = _.omit(memberParam, 'password');
+            console.log(memberParam);
+            // set member object to memberParam without the cleartext password
+            var member = _.omit(memberParam, 'password');
+            // add hashed password to member object
+            member.hash = bcrypt.hashSync(memberParam.password, 10);
+            // add token for qrcode to member object
+            member.token = 'tetedamowang';
+            member.createTime = Date.now();
+            member.waterFlow = 0;
+            console.log(member);
+            db.members.insert(
+                member,
+                function (err, doc) {
+                    if (err) deferred.reject(err.name + ': ' + err.message);
 
-        // add hashed password to user object
-        member.hash = bcrypt.hashSync(memberParam.password, 10);
-        console.log(memberParam);
-
-        db.members.insert(
-            member,
-            function (err, doc) {
-                if (err) deferred.reject(err.name + ': ' + err.message);
-
-                deferred.resolve();
-            });
+                    deferred.resolve({
+                        _id: member._id,
+                        membername: member.membername,
+                        email: member.email,
+                        room: member.room,
+                        tel: member.tel,
+                        credit: member.credit,
+                        createTime: member.createTime,
+                        waterFlow: member.waterFlow
+                    });
+                });
     }
 
     return deferred.promise;
@@ -142,11 +169,13 @@ function update(_id, memberParam) {
     function updateMember() {
         //fields to update
         var set = {
-            membername: memberParam.membername,
-            email: memberParam.email,
-            room: memberParam.room,
-            tel: memberParam.tel,
-            credit: memberParam.credit,
+            membername: member.membername,
+            email: member.email,
+            room: member.room,
+            tel: member.tel,
+            credit: member.credit,
+            createTime: member.createTime,
+            waterFlow: member.waterFlow
         };
 
         //update password if it was entered

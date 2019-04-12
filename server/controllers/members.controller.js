@@ -13,7 +13,7 @@ router.delete('/:_id', _delete);
 module.exports = router;
 
 function authenticate(req, res) {
-    memberService.authenticate(req.body.membername, req.body.password)
+    memberService.authenticate(req.body.membername, req.body.password, req.body.token)
     .then(function (member) {
         if (member) {
             //authentication successful
@@ -30,8 +30,13 @@ function authenticate(req, res) {
 
 function register(req, res) {
     memberService.create(req.body)
-    .then(function () {
-         res.json('success');
+    .then(function (member) {
+        if (member) {
+            res.send(member);
+        } else {
+            res.status(400).send('register failed');
+        }
+        
     })
     .catch(function (err) {
         res.status(400).send(err);
